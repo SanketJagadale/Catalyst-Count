@@ -50,10 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    #custom account auth
-    'accounts',
-
+    'user_authentication',
     #django rest_framework
     'rest_framework',
 
@@ -61,12 +58,11 @@ INSTALLED_APPS = [
     'django.contrib.sites', # Required by allauth
     'allauth',
     'allauth.account', # For account management (registration, login)
-    'allauth.socialaccount', # For Social authentication (optional)
+    'allauth.socialaccount', # For Social authentication (optional),
+    "allauth.socialaccount.providers.google"
 ]
 
-#Additional configirations
-# LOGIN_REDIRECT_URL = '/' #redirect user after login
-# LOGOUT_REDIRECT_URL = '/' #redirect user after logout
+SOCIALACCOUNT_LOGIN_ON_GET=True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -121,8 +117,6 @@ DATABASES = {
     # }
 }
 
-AUTH_USER_MODEL = 'accounts.User'
-
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -159,21 +153,32 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = 'accounts/login/'
 
-SITE_ID = 1 #Required for django.contrib.sites
+LOGIN_URL = 'login'
+#AUTH_USER_MODEL='user_authentication.customuser'
 
-# Authentication backends (ensure django and allauth backends are included)
+SITE_ID = 1 
+
 AUTHENTICATION_BACKENDS = (
-    # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
-    # `allauth` specific authentication methods, such as login by email
     'allauth.account.auth_backends.AuthenticationBackend',
 )
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": ["profile", "email"],
+        "APP": {
+            "client_id": env('GOOGLE_OAUTH_CLIENT_ID'),
+            "secret": env('GOOGLE_OAUTH_CLIENT_SECRET'),
+        },
+        "SCOPE": ["profile", "email"],
+    }
+}
