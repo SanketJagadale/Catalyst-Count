@@ -50,7 +50,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD
     'user_authentication',
+=======
+    
+>>>>>>> 1ede4c26a1fc1bbbe8d3c4e9aa03852ab4ef7f35
     #django rest_framework
     'rest_framework',
 
