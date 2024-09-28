@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Welcome to Catalyst Count Website!</h2>
+                    {% if user.is_authenticated %}
+                        <p class="card-text text-center">You are logged in as <strong>{{ user.username }}</strong>.</p>
+                        <div class="text-center">
+                            <a href="{% url 'account_logout' %}" class="btn btn-danger">Logout</a>
+                        </div>
+                    {% else %}
+                        <p class="card-text text-center">You are not logged in.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

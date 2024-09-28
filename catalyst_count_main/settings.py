@@ -50,6 +50,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    #django rest_framework
+    'rest_framework',
+
+    #django-allauth
     'django.contrib.sites', # Required by allauth
     'allauth',
     'allauth.account', # For account management (registration, login)
@@ -156,7 +161,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = 'accounts/login/'
 
 SITE_ID = 1 #Required for django.contrib.sites
 
@@ -165,5 +171,5 @@ AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
     # `allauth` specific authentication methods, such as login by email
-    'allauth.account.auth_backends.AuthentcationBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 )
