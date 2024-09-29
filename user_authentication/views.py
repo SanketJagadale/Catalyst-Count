@@ -59,7 +59,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from user_authentication.forms import SignUpForm
 from django.contrib.auth import login,logout,authenticate
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group,User
+from django.contrib.auth.models import User
 
 # Create your views here.
 
@@ -67,13 +67,9 @@ def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()   
-
-            # Add user to the 'Customers' group
-            customers_group, created = Group.objects.get_or_create(name='Customers')
-            user.groups.add(customers_group)
+            user = form.save()
                    
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('home')
     else:
         form=SignUpForm()

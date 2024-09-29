@@ -9,12 +9,12 @@
                     {% if user.is_authenticated %}
                         <p class="card-text text-center">You are logged in as <strong>{{ user.username }}</strong>.</p>
                         <div class="text-center">
-                            <a href="{% url 'account_logout' %}" class="btn btn-danger">Logout</a>
+                            <a href="{% url 'signout' %}" class="btn btn-danger">Logout</a>
                         </div>
                     {% else %}
                         <p class="card-text text-center">You are not logged in.</p>
                         <div class="text-center">
-                            <a href="{% url 'account_login' %}" class="btn btn-primary">Login</a>
+                            <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
                         </div>
                     {% endif %}
                 </div>
