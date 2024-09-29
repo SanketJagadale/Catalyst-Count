@@ -10,7 +10,7 @@
                 <div class="card">
                     <div class="card-header">Login to Continue</div>
                     <div class="card-body">
-                        <form method="post" action="{% url 'account_login' %}" class="form">
+                        <form method="post" action="{% url 'login' %}" class="form">
                             {% csrf_token %}
                             <div class="mb-4 mt-3">
                                 {% comment %} <label for="id_username" class="form-label">Username</label> {% endcomment %}
@@ -38,6 +38,7 @@
                                 </div>
                             {% endif %}
                         </form>
+                        <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a>.</p>
                     </div>
                 </div>
             </div>

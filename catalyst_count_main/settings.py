@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'user_authentication',
     #django rest_framework
     'rest_framework',
 
@@ -162,7 +163,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 LOGIN_URL = 'login'
-#AUTH_USER_MODEL='user_authentication.customuser'
+#AUTH_USER_MODEL='user_authentication.CustomUser'
 
 SITE_ID = 1 
 
