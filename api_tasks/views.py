@@ -52,3 +52,73 @@ class FileUploadView(APIView):
             return Response({"status": "success", "file_id": uploaded_file.id}, status=status.HTTP_201_CREATED)
         return Response({"status": "error", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class QueryBuilderView(APIView):
+    def get(self,request):
+        distinct_industries = CompanyInfo.objects.values('industry').distinct()
+        distinct_years_founded = CompanyInfo.objects.values('year_founded').distinct()
+
+        distinct_localities = CompanyInfo.objects.values('locality').distinct()
+        distinct_cities = []
+        distinct_states = []
+        for locality in distinct_localities:
+            locality_parts = locality['locality'].split(', ')
+            if len(locality_parts) >= 2:
+                distinct_cities.append(locality_parts[0])
+                distinct_states.append(locality_parts[1])
+
+        distinct_countries = CompanyInfo.objects.values('country').distinct()
+        distinct_employees_from = CompanyInfo.objects.values('current_employee_estimate').distinct()
+        distinct_employees_to = CompanyInfo.objects.values('total_employee_estimate').distinct()
+
+        return render(request, 'query_builder.html', {
+            'distinct_industries': distinct_industries,
+            'distinct_years_founded': distinct_years_founded,
+            'distinct_cities': distinct_cities,
+            'distinct_states': distinct_states,
+            'distinct_countries': distinct_countries,
+            'distinct_employees_from': distinct_employees_from,
+            'distinct_employees_to': distinct_employees_to,
+        })
+
+    def post(self,request):
+        keyword = request.data.get('keyword')
+        industry = request.data.get('industry')
+        year_founded = request.data.get('year_founded')
+        city = request.data.get('city')
+        state = request.data.get('state')
+        country = request.data.get('country')
+        employees_from = request.data.get('employeesFrom')
+        employees_to = request.data.get('employeesTo')
+        
+        filtered_data = CompanyInfo.objects.all()
+        
+        if keyword:
+            filtered_data = filtered_data.filter(name__icontains=keyword)
+        
+        if industry:
+            filtered_data = filtered_data.filter(industry=industry)
+        
+        if year_founded:
+            filtered_data = filtered_data.filter(year_founded=year_founded)
+        
+        if city:
+            filtered_data = filtered_data.filter(locality__icontains=city)
+        
+        if state:
+            filtered_data = filtered_data.filter(locality__icontains=state)
+        
+        if country:
+            filtered_data = filtered_data.filter(country=country)
+        
+        if employees_from:
+            filtered_data = filtered_data.filter(current_employee_estimate__gte=employees_from)
+        
+        if employees_to:
+            filtered_data = filtered_data.filter(total_employee_estimate__lte=employees_to)
+        
+        filtered_count = filtered_data.count()
+        
+        serializer = CompanyInfoSerializer(filtered_data, many=True)
+
+        return Response({'filtered_count': filtered_count, 'filtered_data': serializer.data}, status=status.HTTP_200_OK)

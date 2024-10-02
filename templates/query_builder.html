@@ -1,0 +1,167 @@
+{% extends 'all_auth/layout/base.html' %}
+
+{% block title %}Query Builders{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div id="filteredCount" class="container mt-3">
+        <div id="filteredMessage" class="alert alert-info" role="alert" style="display: none;">
+            <span id="countValue">0</span> records found for the query
+        </div>
+    </div>
+    <h1 class="mb-4">Query Builder</h1>
+    <form id="queryForm" method="post">
+        {% csrf_token %}
+        
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="keyword">Keyword</label>
+                <input type="text" class="form-control" id="keyword" name="keyword">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="industry">Industry</label>
+                <select class="form-control" id="industry" name="industry">
+                    <option value="">Select Industry</option>
+                    {% for industry in distinct_industries %}
+                        <option value="{{ industry.industry }}">{{ industry.industry }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="year_founded">Year Founded</label>
+                <select class="form-control" id="year_founded" name="year_founded">
+                    <option value="">Select Year</option>
+                    {% for year in distinct_years_founded %}
+                        <option value="{{ year.year_founded }}">{{ year.year_founded }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="city">City</label>
+                <select class="form-control" id="city" name="city">
+                    <option value="">Select City</option>
+                    {% for city in distinct_cities %}
+                        <option value="{{ city }}">{{ city }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="state">State</label>
+                <select class="form-control" id="state" name="state">
+                    <option value="">Select State</option>
+                    {% for state in distinct_states %}
+                        <option value="{{ state }}">{{ state }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="country">Country</label>
+                <select class="form-control" id="country" name="country">
+                    <option value="">Select Country</option>
+                    {% for country in distinct_countries %}
+                        <option value="{{ country.country }}">{{ country.country }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="employeesFrom">Employees (From)</label>
+                <select class="form-control" id="employeesFrom" name="employeesFrom">
+                    <option value="">Select Employees (From)</option>
+                    {% for employees_from in distinct_employees_from %}
+                        <option value="{{ employees_from.current_employee_estimate }}">{{ employees_from.current_employee_estimate }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="employeesTo">Employees (To)</label>
+                <select class="form-control" id="employeesTo" name="employeesTo">
+                    <option value="">Select Employees (To)</option>
+                    {% for employees_to in distinct_employees_to %}
+                        <option value="{{ employees_to.total_employee_estimate }}">{{ employees_to.total_employee_estimate }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <button type="submit" class="btn btn-primary mr-2" id="queryBtn">Query Data</button>
+                <button type="button" class="btn btn-secondary" id="resetForm">Reset</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Validation Error -->
+    <div id="validationError" class="alert alert-danger" style="display: none;"></div>
+</div>
+
+{% block scripts %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#queryForm').on('submit', function(e) {
+            e.preventDefault(); 
+
+            var hasValue = false;
+            $(this).find('input, select').each(function() {
+                if ($(this).val()) {
+                    hasValue = true;
+                    return false; // Break the loop
+                }
+            });
+
+            if (!hasValue) {
+                $('#validationError').text('Please enter any value to filter').show();
+                return; 
+            }
+
+            $('#validationError').hide();
+
+            var formData = $(this).serialize();
+            
+            $.ajax({
+                url: '{% url "get_count_match_filter" %}',  // Make sure to update this with your URL
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    $('#countValue').text(response.filtered_count);
+                    $('#filteredMessage').show();
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                    $('#validationError').text('An error occurred while processing your request. Please try again.').show();
+                }
+            });
+        });
+
+        // Enable/disable button based on form inputs
+        $('#queryBtn').prop('disabled', true);
+        $('#queryForm input, #queryForm select').on('input change', function() {
+            var disable = true;
+            $('#queryForm input, #queryForm select').each(function() {
+                if ($(this).val()) {
+                    disable = false;
+                    return false; 
+                }
+            });
+            $('#queryBtn').prop('disabled', disable); 
+        });
+
+        // Reset form and hide messages
+        $('#resetForm').on('click', function() {
+            $('#queryForm')[0].reset(); 
+            $('#filteredMessage').hide();
+            $('#countValue').text('0');
+            $('#validationError').hide();
+            $('#queryBtn').prop('disabled', true); 
+        });
+    });
+</script>
+{% endblock %}
+
+{% endblock %}
