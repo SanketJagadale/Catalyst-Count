@@ -54,7 +54,7 @@ class FileUploadView(APIView):
 
 
 class QueryBuilderView(APIView):
-    def get(self,request):
+    def get(self,request, *args, **kwargs):
         distinct_industries = CompanyInfo.objects.values('industry').distinct()
         distinct_years_founded = CompanyInfo.objects.values('year_founded').distinct()
 
@@ -81,7 +81,7 @@ class QueryBuilderView(APIView):
             'distinct_employees_to': distinct_employees_to,
         })
 
-    def post(self,request):
+    def post(self,request, *args, **kwargs):
         keyword = request.data.get('keyword')
         industry = request.data.get('industry')
         year_founded = request.data.get('year_founded')
