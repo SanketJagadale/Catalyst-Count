@@ -75,7 +75,7 @@ python manage.py migrate
 # Run the server
 python manage.py runserver
 
-# your server is up on port 8001
+# your server is up on port 8000
 ```
 Try opening [http://127.0.0.1:8000](http://127.0.0.1:8000) in the browser.
 Now you are good to go.
