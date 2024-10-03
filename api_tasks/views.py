@@ -26,7 +26,7 @@ class FileUploadView(APIView):
                 data_set = csv_file.read().decode('UTF-8')
                 io_string = io.StringIO(data_set)
 
-                # Use threading to handle the CSV processing asynchronously
+                # Background Processing Use threading to handle the CSV processing asynchronously
                 def process_csv():
                     reader = csv.reader(io_string)
                     next(reader)
